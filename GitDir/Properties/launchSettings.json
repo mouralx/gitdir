@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "GitDir": {
+      "commandName": "Project",
+      "commandLineArgs": "status"
+    }
+  }
+}
