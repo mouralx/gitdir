@@ -2,7 +2,7 @@
 {
     public class Constants
     {
-        public const string SETTINGS_JSON_FILE = "settings.json";
+        public const string SETTINGS_JSON_FILE = "Settings.json";
         public const string ENVIRONMENT_VARIABLE_NAME = "Path";
         public const string SHUTDOWN_COMMAND = "shutdown.exe";
         public const string SHUTDOWN_ARGS = "-r -t 0";
