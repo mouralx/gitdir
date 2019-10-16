@@ -1,0 +1,2 @@
+- git clone https://github.com/mouralx/gitdir.git
+- dotnet publish -c Release --runtime win10-x64
