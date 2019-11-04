@@ -42,6 +42,8 @@ namespace GitDir
             {
                 List<string> tempList = Environment.CommandLine.Split(Constants.SPACE_CHAR).ToList();
 
+                tempList.RemoveAt(0);
+
                 GitCommand = string.Join(Constants.SPACE_CHAR, tempList);
 
                 Directories = Directory.GetDirectories(Environment.CurrentDirectory);
