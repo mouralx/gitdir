@@ -5,23 +5,23 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace GitDir
 {
     class Program
     {
-        #region FIELDS
-        static List<string> NonGitDirectories { get; set; }
-        static string[] Directories { get; set; }
-        static int CurrentDirectoryIndex { get; set; }
-        static Process Process { get; set; }
-        static bool AlreadyShownNonGitDirectories { get; set; }
-        static string GitCommand { get; set; }
+
         static IConfigurationRoot Configuration { get; set; }
-        static Messages Messages { get; set; }
+        static string[] directories { get; set; }
+        static string GitCommand { get; set; }
         static string DefaultLanguage { get; set; }
-        #endregion
-        #region CONSTRUCT
+        static int CurrentDirectoryIndex { get; set; }
+        static bool AlreadyShownNonGitDirectories { get; set; }
+        static List<string> NonGitDirectories { get; set; }
+        static Messages Messages { get; set; }
+        static Process Process { get; set; }
+
         private static void Main(string[] args)
         {
             Messages = new Messages();
@@ -46,15 +46,16 @@ namespace GitDir
 
                 GitCommand = string.Join(Constants.SPACE_CHAR, tempList);
 
-                Directories = Directory.GetDirectories(Environment.CurrentDirectory);
+                directories = Directory.GetDirectories(Environment.CurrentDirectory);
 
-                if (Directories.Length > 0)
-
+                if (directories.Length > 0)
+                {
                     ProcessDirectory(CurrentDirectoryIndex);
-
+                }
                 else
-
+                {
                     Console.WriteLine(Messages.GetMessage(Constants.MESSAGES_IDENTIFIER_NO_DIRECTORIES).GetText(DefaultLanguage));
+                }
             }
             else if (environmentVariable.Contains(baseDirectory) == false)
             {
@@ -76,11 +77,10 @@ namespace GitDir
                 Console.WriteLine(Messages.GetMessage(Constants.MESSAGES_IDENTIFIER_NO_GIT_COMMAND).GetText(DefaultLanguage));
             }
         }
-        #endregion
-        #region METHODS
+
         private static void ProcessDirectory(int directoryIndex)
         {
-            Environment.CurrentDirectory = Directories[directoryIndex];
+            Environment.CurrentDirectory = directories[directoryIndex];
 
             if (Directory.Exists(Path.Combine(Environment.CurrentDirectory, Constants.GIT_DIR_NAME)))
             {
@@ -123,11 +123,12 @@ namespace GitDir
                 Process_Exited(null, null);
             }
         }
+
         private static void Process_Exited(object sender, EventArgs e)
         {
             CurrentDirectoryIndex = CurrentDirectoryIndex + 1;
 
-            if (CurrentDirectoryIndex < Directories.Length)
+            if (CurrentDirectoryIndex < directories.Length)
             {
                 ProcessDirectory(CurrentDirectoryIndex);
             }
@@ -141,7 +142,7 @@ namespace GitDir
 
                 Console.ResetColor();
 
-                foreach (string directory in Directories)
+                Parallel.ForEach(directories, directory =>
                 {
                     NonGitDirectories = NonGitDirectories ?? new List<string>();
 
@@ -163,12 +164,10 @@ namespace GitDir
                     Console.ResetColor();
 
                     Console.Write(string.Concat(Constants.CHECK_BOX_END, directory, Constants.LINE_FEED));
-                }
+                });
             }
 
             Process?.Refresh();
-
         }
-        #endregion
     }
 }
