@@ -1,5 +1,6 @@
-﻿using GitDir.Data;
-using Microsoft.Extensions.Configuration;
+﻿using GitDir.Configurations;
+using GitDir.Data;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,11 +12,9 @@ namespace GitDir
 {
     class Program
     {
-
-        static IConfigurationRoot Configuration { get; set; }
+        static Settings Settings { get; set; }
         static string[] directories { get; set; }
         static string GitCommand { get; set; }
-        static string DefaultLanguage { get; set; }
         static int CurrentDirectoryIndex { get; set; }
         static bool AlreadyShownNonGitDirectories { get; set; }
         static List<string> NonGitDirectories { get; set; }
@@ -24,23 +23,15 @@ namespace GitDir
 
         private static void Main(string[] args)
         {
-            Messages = new Messages();
-
-            var environmentVariable = Environment.GetEnvironmentVariable(Constants.ENVIRONMENT_VARIABLE_NAME);
-
             var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
             var jsonFilePath = Path.Combine(baseDirectory, Constants.SETTINGS_JSON_FILE);
 
-            Console.WriteLine(jsonFilePath);
+            Settings = JsonConvert.DeserializeObject<Settings>(File.ReadAllText(jsonFilePath));
 
-            var builder = new ConfigurationBuilder().AddJsonFile(jsonFilePath);
+            var environmentVariable = Environment.GetEnvironmentVariable(Constants.ENVIRONMENT_VARIABLE_NAME);
 
-            Configuration = builder.Build();
-
-            Configuration.GetSection(Constants.SETTINGS_SECTION_MESSAGES).Bind(Messages);
-
-            DefaultLanguage = Configuration.GetSection(Constants.SETTINGS_SECTION_DEFAULT_LANGUAGE).Value;
+            Messages messages = Settings.Messages;
 
             if (environmentVariable.Contains(baseDirectory) && args.Length > 0)
             {
@@ -58,7 +49,7 @@ namespace GitDir
                 }
                 else
                 {
-                    Console.WriteLine(Messages.GetMessage(Constants.MESSAGES_IDENTIFIER_NO_DIRECTORIES).GetText(DefaultLanguage));
+                    Console.WriteLine(Messages.GetMessage(Constants.MESSAGES_IDENTIFIER_NO_DIRECTORIES).GetText(Settings.DefaultLanguage));
                 }
             }
             else if (environmentVariable.Contains(baseDirectory) == false)
@@ -67,7 +58,7 @@ namespace GitDir
 
                 Environment.SetEnvironmentVariable(Constants.ENVIRONMENT_VARIABLE_NAME, environmentVariable, EnvironmentVariableTarget.User);
 
-                Console.Write(Messages.GetMessage(Constants.MESSAGES_IDENTIFIER_INSTALLED_REBOOT).GetText(DefaultLanguage));
+                Console.Write(Messages.GetMessage(Constants.MESSAGES_IDENTIFIER_INSTALLED_REBOOT).GetText(Settings.DefaultLanguage));
 
                 var reboot = Console.ReadKey();
 
@@ -78,7 +69,7 @@ namespace GitDir
             }
             else
             {
-                Console.WriteLine(Messages.GetMessage(Constants.MESSAGES_IDENTIFIER_NO_GIT_COMMAND).GetText(DefaultLanguage));
+                Console.WriteLine(Messages.GetMessage(Constants.MESSAGES_IDENTIFIER_NO_GIT_COMMAND).GetText(Settings.DefaultLanguage));
             }
         }
 
@@ -90,7 +81,7 @@ namespace GitDir
             {
                 Console.ForegroundColor = ConsoleColor.Green;
 
-                Console.WriteLine(string.Concat(Messages.GetMessage(Constants.MESSAGES_IDENTIFIER_DIR_INDICATOR).GetText(DefaultLanguage), Environment.CurrentDirectory, Constants.LINE_FEED));
+                Console.WriteLine(string.Concat(Messages.GetMessage(Constants.MESSAGES_IDENTIFIER_DIR_INDICATOR).GetText(Settings.DefaultLanguage), Environment.CurrentDirectory, Constants.LINE_FEED));
 
                 Console.ResetColor();
 
@@ -142,7 +133,7 @@ namespace GitDir
 
                 Console.ForegroundColor = ConsoleColor.Green;
 
-                Console.WriteLine(Messages.GetMessage(Constants.MESSAGES_IDENTIFIER_DIR_INFO).GetText(DefaultLanguage));
+                Console.WriteLine(Messages.GetMessage(Constants.MESSAGES_IDENTIFIER_DIR_INFO).GetText(Settings.DefaultLanguage));
 
                 Console.ResetColor();
 
