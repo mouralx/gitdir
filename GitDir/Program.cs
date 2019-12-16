@@ -32,6 +32,8 @@ namespace GitDir
 
             var jsonFilePath = Path.Combine(baseDirectory, Constants.SETTINGS_JSON_FILE);
 
+            Console.WriteLine(jsonFilePath);
+
             var builder = new ConfigurationBuilder().AddJsonFile(jsonFilePath);
 
             Configuration = builder.Build();
