@@ -30,9 +30,9 @@ namespace GitDir
 
             var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
-            string jsonFile = Path.Combine(Directory.GetCurrentDirectory(), Constants.SETTINGS_JSON_FILE);
+            var jsonFilePath = Path.Combine(baseDirectory, Constants.SETTINGS_JSON_FILE);
 
-            var builder = new ConfigurationBuilder().SetBasePath(baseDirectory).AddJsonFile(jsonFile);
+            var builder = new ConfigurationBuilder().AddJsonFile(jsonFilePath);
 
             Configuration = builder.Build();
 
