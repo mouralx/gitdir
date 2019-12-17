@@ -23,7 +23,7 @@ namespace GitDir
 
         private static void Main(string[] args)
         {
-            var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            var baseDirectory = Environment.CurrentDirectory;
 
             var jsonFilePath = Path.Combine(baseDirectory, Constants.SETTINGS_JSON_FILE);
 
