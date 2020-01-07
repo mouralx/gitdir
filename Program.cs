@@ -18,7 +18,7 @@ namespace GitDir
         {
             string location = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
 
-            string variable = Environment.GetEnvironmentVariable(ENVIRONMENT_VARIABLE_NAME, EnvironmentVariableTarget.User);
+            string variable = Environment.GetEnvironmentVariable(ENVIRONMENT_VARIABLE_NAME);
 
             string[] values = variable?.Split(ENVIRONMENT_VARIABLE_SPLITER);
 
@@ -30,7 +30,7 @@ namespace GitDir
 
                 variable = String.Join(ENVIRONMENT_VARIABLE_SPLITER, tempValues.ToArray());
 
-                Environment.SetEnvironmentVariable(ENVIRONMENT_VARIABLE_NAME, variable, EnvironmentVariableTarget.User);
+                Environment.SetEnvironmentVariable(ENVIRONMENT_VARIABLE_NAME, variable);
             }
 
             string[] directories = Directory.GetDirectories(Environment.CurrentDirectory);
