@@ -14,6 +14,7 @@ namespace GitDir
         const string ENVIRONMENT_VARIABLE_NAME = "PATH";
         const char ARGS_SEPARATOR = ' ';
         const char ENVIRONMENT_VARIABLE_SPLITER = ';';
+        
         static void Main(string[] args)
         {
             if (args?.Length > 0)
