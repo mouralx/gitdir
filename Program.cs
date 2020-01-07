@@ -20,9 +20,9 @@ namespace GitDir
 
             string variable = Environment.GetEnvironmentVariable(ENVIRONMENT_VARIABLE_NAME, EnvironmentVariableTarget.User);
 
-            string[] values = variable.Split(ENVIRONMENT_VARIABLE_SPLITER);
+            string[] values = variable?.Split(ENVIRONMENT_VARIABLE_SPLITER);
 
-            if (!values.Any(val => val.Equals(location)))
+            if (values != null && !values.Any(val => val.Equals(location)))
             {
                 List<String> tempValues = values.ToList();
 
