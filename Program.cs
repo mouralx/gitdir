@@ -16,57 +16,60 @@ namespace GitDir
         const char ENVIRONMENT_VARIABLE_SPLITER = ';';
         static void Main(string[] args)
         {
-            string location = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-
-            string variable = Environment.GetEnvironmentVariable(ENVIRONMENT_VARIABLE_NAME);
-
-            string[] values = variable?.Split(ENVIRONMENT_VARIABLE_SPLITER);
-
-            if (values != null && !values.Any(val => val.Equals(location)))
+            if (args?.Length > 0)
             {
-                List<String> tempValues = values.ToList();
+                string location = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
 
-                tempValues.Add(location);
+                string variable = Environment.GetEnvironmentVariable(ENVIRONMENT_VARIABLE_NAME);
 
-                variable = String.Join(ENVIRONMENT_VARIABLE_SPLITER, tempValues.ToArray());
+                string[] values = variable?.Split(ENVIRONMENT_VARIABLE_SPLITER);
 
-                Environment.SetEnvironmentVariable(ENVIRONMENT_VARIABLE_NAME, variable);
-            }
-
-            string[] directories = Directory.GetDirectories(Environment.CurrentDirectory);
-
-            List<string> gitDirectories = new List<string>();
-
-            foreach (string directory in directories)
-            {
-                if (Directory.GetDirectories(directory).Any(d => d.EndsWith(GIT_DIRECTORY_NAME)))
+                if (values != null && !values.Any(val => val.Equals(location)))
                 {
-                    gitDirectories.Add(directory);
+                    List<String> tempValues = values.ToList();
+
+                    tempValues.Add(location);
+
+                    variable = String.Join(ENVIRONMENT_VARIABLE_SPLITER, tempValues.ToArray());
+
+                    Environment.SetEnvironmentVariable(ENVIRONMENT_VARIABLE_NAME, variable);
                 }
-            };
 
-            foreach (string gitDirectory in gitDirectories)
-            {
-                Console.ForegroundColor = ConsoleColor.Green;
+                string[] directories = Directory.GetDirectories(Environment.CurrentDirectory);
 
-                Console.WriteLine(gitDirectory);
+                List<string> gitDirectories = new List<string>();
 
-                Console.ForegroundColor = ConsoleColor.DarkGray;
+                foreach (string directory in directories)
+                {
+                    if (Directory.GetDirectories(directory).Any(d => d.EndsWith(GIT_DIRECTORY_NAME)))
+                    {
+                        gitDirectories.Add(directory);
+                    }
+                };
 
-                ProcessStartInfo processStartInfo = new ProcessStartInfo(GIT_COMMAND, String.Join(ARGS_SEPARATOR, args));
+                foreach (string gitDirectory in gitDirectories)
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
 
-                Process process = new Process();
+                    Console.WriteLine(gitDirectory);
 
-                processStartInfo.WorkingDirectory = gitDirectory;
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
 
-                process.StartInfo = processStartInfo;
-                process.Start();
-                process.WaitForExit();
+                    ProcessStartInfo processStartInfo = new ProcessStartInfo(GIT_COMMAND, String.Join(ARGS_SEPARATOR, args));
 
-                Console.WriteLine();
+                    Process process = new Process();
+
+                    processStartInfo.WorkingDirectory = gitDirectory;
+
+                    process.StartInfo = processStartInfo;
+                    process.Start();
+                    process.WaitForExit();
+
+                    Console.WriteLine();
+                }
+
+                Console.ResetColor(); 
             }
-
-            Console.ResetColor();
         }
     }
 }
